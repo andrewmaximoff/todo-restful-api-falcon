@@ -5,6 +5,7 @@ import falcon
 
 from todoapi.models import User
 
+
 class BasicAuthMiddleware:
     def __init__(self, exempt_routes=None):
         self.auth_header_prefix = 'Basic'
@@ -19,15 +20,19 @@ class BasicAuthMiddleware:
         if req.path not in self.exempt_routes:
             username, password = self._extract_credentials(req)
             user = self.user_loader(username, password)
-            if not user:
+            if user is None:
                 raise falcon.HTTPUnauthorized(
                     title='401 Unauthorized',
                     description='Invalid Username/Password',
                     challenges=None).to_json()
             req.context['user'] = user
 
-    def user_loader(self, username, password):
-        return True
+    @staticmethod
+    def user_loader(username, password):
+        user = User.objects(username=username).first()
+        if user.check_password(password):
+            return user
+        return None
 
     def _extract_credentials(self, req):
         auth = req.get_header('Authorization')

@@ -10,7 +10,6 @@ from mongoengine import (
     ListField,
     ComplexDateTimeField,
     ReferenceField,
-ObjectIdField
 )
 
 from lib.security import generate_password_hash, check_password_hash
@@ -34,6 +33,7 @@ class Task(Document):
     owner = ReferenceField(User, reverse_delete_rule=CASCADE)
     title = StringField(max_length=120, required=True)
     body = StringField(max_length=256)
+    # TODO: If task has been updated, timestamp should also be updated
     timestamp = ComplexDateTimeField(default=datetime.utcnow)
     done = BooleanField(default=False)
     tags = ListField(StringField(max_length=30))

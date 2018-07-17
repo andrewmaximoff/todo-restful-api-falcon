@@ -4,6 +4,10 @@ import os
 
 
 if __name__ == '__main__':
+    port = 8000
+    host = os.getenv('SERVER_BIND', '127.0.0.1')
     api = ToDo()
-    httpd = simple_server.make_server(os.getenv('SERVER_BIND', '127.0.0.1'), 8000, api)
+    print("======== Running on http://{}/{} ========\n"
+          "(Press CTRL+C to quit)".format(host, port))
+    httpd = simple_server.make_server(os.getenv('SERVER_BIND', host), port, api)
     httpd.serve_forever()

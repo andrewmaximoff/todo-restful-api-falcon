@@ -1,4 +1,4 @@
-class Resource:
+class StatusResource:
     """
     REST API handlets for test
     """

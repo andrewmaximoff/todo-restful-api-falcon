@@ -3,7 +3,7 @@ import falcon
 from todoapi.models import User
 
 
-class Resource:
+class AuthResource:
     """
     REST API handlets for test
     """
@@ -12,14 +12,14 @@ class Resource:
         user = User()
         user['username'] = self._validate_username(req.get_json('username', dtype=str))
         user['email'] = self._validate_email(req.get_json('email', dtype=str))
-        user['first_name'] = req.get_json('first_name', default=None, dtype=str)
-        user['last_name'] = req.get_json('last_name', default=None, dtype=str)
+        user['first_name'] = req.get_json('first_name', default=None)
+        user['last_name'] = req.get_json('last_name', default=None)
 
         user.set_password(req.get_json('password', dtype=str))
         user.save()
         resp.json = {
             'msg': 'OK',
-            'description': f"User '{user.username}' create!"
+            'description': f"User '{user.username}' created!"
         }
 
     @staticmethod
@@ -29,7 +29,7 @@ class Resource:
             raise falcon.HTTPUnauthorized(
                 title='409 Conflict',
                 description='Username already exists',
-                challenges=None).to_json()
+                challenges=None)
         return username
 
     @staticmethod
@@ -39,5 +39,5 @@ class Resource:
             raise falcon.HTTPConflict(
                 title='409 Conflict',
                 description='Email already exists',
-                challenges=None).to_json()
+                challenges=None)
         return email

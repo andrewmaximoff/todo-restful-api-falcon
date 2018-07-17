@@ -22,7 +22,7 @@ class ToDo(falcon.API):
                 auth.BasicAuthMiddleware(
                     exempt_routes=[
                         '/api/v0.1/auth',
-                        'api/status'
+                        '/api/status'
                     ]
                 )
             ]
