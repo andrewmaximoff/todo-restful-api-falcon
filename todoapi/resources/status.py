@@ -1,3 +1,5 @@
+# TODO: create uri for check server status
+
 class StatusResource:
     """
     REST API handlets for test
