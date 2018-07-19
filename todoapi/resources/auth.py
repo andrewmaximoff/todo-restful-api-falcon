@@ -21,6 +21,7 @@ class AuthResource:
             'msg': 'OK',
             'description': f"User '{user.username}' created!"
         }
+        resp.status = falcon.HTTP_201
 
     @staticmethod
     def _validate_username(username):
@@ -28,8 +29,7 @@ class AuthResource:
         if user is not None:
             raise falcon.HTTPUnauthorized(
                 title='409 Conflict',
-                description='Username already exists',
-                challenges=None)
+                description='Username already exists')
         return username
 
     @staticmethod
@@ -38,6 +38,5 @@ class AuthResource:
         if user is not None:
             raise falcon.HTTPConflict(
                 title='409 Conflict',
-                description='Email already exists',
-                challenges=None)
+                description='Email already exists')
         return email

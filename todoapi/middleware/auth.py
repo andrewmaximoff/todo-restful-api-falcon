@@ -1,4 +1,3 @@
-# TODO: Add exempt_methods in Auth
 import base64
 
 import falcon
