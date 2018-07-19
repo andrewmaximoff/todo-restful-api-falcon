@@ -13,7 +13,7 @@ class DateTimeEncoder(json.JSONEncoder):
         return json.JSONEncoder.default(self, o)
 
 
-class Middleware(object):
+class JsonifyMiddleware:
     def __init__(self, help_messages=True):
         """help_messages: display validation/error messages"""
         self.debug = bool(help_messages)
