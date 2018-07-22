@@ -6,7 +6,6 @@ import mongoengine
 from todoapi.models import Task
 
 
-# TODO: If task field doesn't exist raise exception AttributeError
 TASK_FIELDS = OrderedDict([
     ('id', lambda x: str(x.id)),
     ('owner', lambda x: str(x.owner.username)),
@@ -55,7 +54,6 @@ class TaskResource:
             'error': error is not None,
             'msg': error or 'Task(s) successfully retrieved.'
         }
-
         resp.status = falcon.HTTP_200
 
     def on_post(self, req, resp, task_id=None):
@@ -70,8 +68,9 @@ class TaskResource:
         task = Task(
             owner=user,
             title=req.get_json('title'),
-            body=req.get_json('body'),
-            tags=req.get_json('tags')
+            body=req.get_json('body', default=None),
+            tags=req.get_json('tags', default=None),
+            done=req.get_json('done', default=None)
         )
 
         task.save()
@@ -86,7 +85,6 @@ class TaskResource:
                 'task': task_fields
             }
         }
-
         resp.status = falcon.HTTP_201
 
     def on_put(self, req, resp, task_id=None):
@@ -127,42 +125,36 @@ class TaskResource:
             'error': error is not None,
             'msg': error or 'Task updated!',
         }
-
         resp.status = falcon.HTTP_200
 
-    def on_delete(self, req, resp, task_id=None):
-        if task_id is None:
+    def on_delete(self, req, resp):
+        tasks = req.get_json('tasks', default=None)
+        if tasks is None:
             raise falcon.HTTPBadRequest(
                 title='400 Bad Request',
-                description='You didn\'t specify a task id!'
+                description='You didn\'t specify a task id(s)!'
             )
         try:
-            task = Task.objects(id=task_id).first()
+            tasks = Task.objects(id__in=tasks).all()
         except mongoengine.ValidationError:
             raise falcon.HTTPBadRequest(
                 title='400 Bad Request',
-                description='Invalid task id!'
+                description='Invalid task id(s)!'
             )
 
-        if task is None:
+        if not tasks:
             raise falcon.HTTPBadRequest(
                 title='400 Bad Request',
-                description='Task by current id doesn\'t exists!'
+                description='Task by current id(s) doesn\'t exists!'
             )
-
-        task_fields = self._prepare_task([task])
-        task.delete()
+        tasks.delete()
 
         error = None
 
         resp.json = {
-            'data': {
-                'task': task_fields
-            },
             'error': error is not None,
             'msg': error or 'Task deleted!',
         }
-
         resp.status = falcon.HTTP_200
 
     @staticmethod

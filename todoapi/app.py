@@ -18,7 +18,7 @@ class ToDo(falcon.API):
     def __init__(self):
         super(ToDo, self).__init__(
             middleware=[
-                jsonify.JsonifyMiddleware(help_messages=settings.DEBUG),
+                jsonify.JsonifyMiddleware(),
                 auth.BasicAuthMiddleware(
                     exempt_routes=[
                         '/api/v0.1/auth',
